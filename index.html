@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hitung Simulasi dan Kalkulator KPR</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: linear-gradient(to bottom, #e4ebf4, #58d0f5);
+        }
+
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .container, .table-container {
+            width: 45%;
+            background-color: rgb(208, 203, 203);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(61, 60, 60, 0.1);
+        }
+
+        .container h2, .table-container h2 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #454242;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 6px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #09cb10;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .highlight {
+            background-color: #ffff99;
+        }
+
+        .not-recommended {
+            color: red;
+            font-weight: bold;
+        }
+
+        .recommended {
+            color: green;
+            font-weight: bold;
+        }
+
+        .whatsapp-button {
+            display: block;
+            width: 45%;
+            text-align: center;
+            padding: 15px;
+            margin-top: 10px;
+            background-color: #25D366;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 style="text-align: center;">Simulasi dan Kalkulator KPR</h1>
+
+    <div class="flex-container">
+        
+        <!-- Kalkulator KPR Section -->
+        <div class="container">
+            <h2>Kalkulator KPR</h2>
+            <label for="loanAmount">Harga Properti:</label>
+            <input type="number" id="loanAmount" placeholder="Harga Properti (Rp)" required>
+            
+            <label for="interestRate">Suku Bunga:</label>
+            <input type="number" id="interestRate" placeholder="Suku Bunga (%)" required>
+            
+            <label for="loanTerm">Jangka Waktu (tahun):</label>
+            <input type="number" id="loanTerm" placeholder="Jangka Waktu" required>
+            
+            <button onclick="calculate()">Hitung Cicilan</button>
+            
+            <div id="result"></div>
+            <div id="summary"></div>
+
+        </div>
+
+        <!-- Simulasi Kredit Section -->
+        <div class="table-container">
+            <h2>Simulasi Kredit</h2>
+            <table>
+                <tr>
+                    <th>Keterangan</th>
+                    <th>Nilai</th>
+                </tr>
+                <tr>
+                    <td>Pendapatan Pemohon</td>
+                    <td><input type="number" id="incomeApplicants" value=""></td>
+                </tr>
+                <tr>
+                    <td>Pendapatan Lainnya</td>
+                    <td><input type="number" id="incomeOthers" value=""></td>
+                </tr>
+                <tr>
+                    <td>Pengeluaran dan Cicilan</td>
+                    <td><input type="number" id="otherInstallments" value=""></td>
+                </tr>
+                <tr>
+                    <td>Estimasi Cicilan KPR</td>
+                    <td><input type="number" id="installmentEstKPR" value="" readonly></td>
+                </tr>
+                <tr>
+                    <td>DBR</td>
+                    <td><span id="dbr">0</span>%</td>
+                </tr>
+                <tr>
+                    <td>DSC</td>
+                    <td><span id="dsc">0</span>%</td>
+                </tr>
+                <tr class="highlight">
+                    <td>Max Installment</td>
+                    <td><span id="maxInstallment">0</span></td>
+                </tr>
+                <tr class="highlight">
+                    <td>Max Limit Credit</td>
+                    <td><span id="maxLimitCredit">0</span></td>
+                </tr>
+                <tr class="highlight">
+                    <td>Sisa Gaji</td>
+                    <td><span id="remainingSalary">0</span></td>
+                </tr>
+                <tr class="highlight">
+                    <td>Recommendation</td>
+                    <td><span id="recommendation" class="recommended">--</span></td>
+                </tr>
+            </table>
+            <a href="https://wa.me/628561918945?text=Halo,%20saya%20ingin%20bertanya%20proses%20untuk%20pengajuan KPR." target="_blank" class="whatsapp-button">
+                Informasi Lebih Lanjut
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        function calculate() {
+            var loanAmount = parseFloat(document.getElementById("loanAmount").value);
+            var interestRate = parseFloat(document.getElementById("interestRate").value);
+            var loanTerm = parseFloat(document.getElementById("loanTerm").value);
+
+            var monthlyInterestRate = interestRate / 100 / 12;
+            var numberOfPayments = loanTerm * 12;
+
+            var monthlyPayment = (loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -numberOfPayments));
+            document.getElementById("installmentEstKPR").value = monthlyPayment.toFixed(2);
+
+            var totalPayment = monthlyPayment * numberOfPayments;
+            var totalInterest = totalPayment - loanAmount;
+
+            var summaryElement = document.getElementById("summary");
+            summaryElement.innerHTML = `<h3>Ringkasan</h3><hr/>
+                Angsuran per Bulan: Rp.${monthlyPayment.toLocaleString("en-US")}<br>
+                Total Pinjaman Pokok: Rp.${totalPayment.toLocaleString("en-US")}<br>
+                Total Pinjaman Suku Bunga: Rp.${totalInterest.toLocaleString("en-US")}`;
+
+            calculateFinancials();
+        }
+
+        function calculateFinancials() {
+            const incomeApplicants = parseFloat(document.getElementById('incomeApplicants').value) || 0;
+            const incomeOthers = parseFloat(document.getElementById('incomeOthers').value) || 0;
+            const otherInstallments = parseFloat(document.getElementById('otherInstallments').value) || 0;
+            const installmentEstKPR = parseFloat(document.getElementById('installmentEstKPR').value) || 0;
+
+            const totalIncome = incomeApplicants + incomeOthers;
+            const dbr = ((otherInstallments + installmentEstKPR) / totalIncome) * 100;
+            const dsc = 70 - dbr;
+            const TotalDsc = dsc / 100;
+
+            const maxInstallment = totalIncome * TotalDsc;
+            const maxLimitCredit = maxInstallment * 120;
+            const remainingSalary = totalIncome - otherInstallments - installmentEstKPR;
+
+            const recommendationElement = document.getElementById('recommendation');
+            if (dbr > 60) {
+                recommendationElement.innerText = 'Not Recommended';
+                recommendationElement.classList.remove('recommended');
+                recommendationElement.classList.add('not-recommended');
+            } else {
+                recommendationElement.innerText = 'Recommended';
+                recommendationElement.classList.remove('not-recommended');
+                recommendationElement.classList.add('recommended');
+            }
+
+            document.getElementById('maxInstallment').innerText = maxInstallment.toLocaleString(undefined, {maximumFractionDigits: 0});
+            document.getElementById('maxLimitCredit').innerText = maxLimitCredit.toLocaleString(undefined, {maximumFractionDigits: 1});
+            document.getElementById('remainingSalary').innerText = remainingSalary.toLocaleString(undefined, {maximumFractionDigits: 1});
+            document.getElementById('dbr').innerText = dbr.toLocaleString(undefined, {maximumFractionDigits: 1});
+            document.getElementById('dsc').innerText = dsc.toLocaleString(undefined, {maximumFractionDigits: 1});
+        }
+
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', calculateFinancials);
+        });
+    </script>
+
+</body>
+<footer>
+    <p style="text-align: center;">2023, Angga Kusuma</p>
+</footer>
+</html>
